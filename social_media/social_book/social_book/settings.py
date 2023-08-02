@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-8w+@w@3hfzqjjtgjl6s=^1o#0_$=y+fn^wr!1gkq#+0hmzk4*b
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# DEFAULT_IMAGE_URL = 'C:\Users\hp folio\Desktop\python\building-a-socialmeddia-site\social_media\social_book\core\media\mlank-profile-picture.png'
 
 # Application definition
 

@@ -3,17 +3,35 @@ from django.template import loader
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
+from .models import Profile
+from django.contrib.auth.decorators import login_required
 
+
+@login_required(login_url="signin")
 def index(request):
     template = loader.get_template("index.html")
     return HttpResponse(template.render())
 
+@login_required(login_url="signin")
 def setting(request):
     template = loader.get_template("setting.html")
     return HttpResponse(template.render())
 
 def signin(request):
-    return render(request,"signin.html")
+    if request.method=='POST' :
+        username = request.POST["signin-username"]
+        password = request.POST["signin-password"]
+
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            return redirect("/")
+        else:
+            messages.info(request,"Invalid credentials")
+            return redirect("signin")
+    else:
+        return render(request,"signin.html")
 
 def signup(request):
     if request.method == 'POST':
@@ -32,6 +50,16 @@ def signup(request):
             else:
                 user = User.objects.create_user(username=username,email=email,password=password)
                 user.save()
+
+                #log user in and redirect to settings page
+                user_login = auth.authenticate(username=username,password=password)
+                auth.login(request, user_login)
+
+                #create a profile object for the new user
+                user_model = User.objects.get(username=username)
+                new_profile = Profile.objects.create(user=user_model,id_user=user_model.id)
+                new_profile.save()
+                return redirect("setting")
         else:
             messages.info(request,"password does not match" )
             return redirect("signup")
@@ -41,3 +69,8 @@ def signup(request):
 def profile(request):
     template = loader.get_template("profile.html")
     return HttpResponse(template.render())
+
+@login_required(login_url="signin")
+def logout(request):
+    auth.logout(request)
+    return redirect("signin")
