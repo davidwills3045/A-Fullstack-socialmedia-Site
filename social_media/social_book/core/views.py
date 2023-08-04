@@ -14,8 +14,37 @@ def index(request):
 
 @login_required(login_url="signin")
 def setting(request):
-    template = loader.get_template("setting.html")
-    return HttpResponse(template.render())
+    user_profile = Profile.objects.get(user=request.user)
+    myprofile = User.objects.all().values()
+    context = {
+        "user": myprofile,
+        "user_profile": user_profile,
+    }
+
+    if request.method == "POST":
+
+        if request.FILES.get("image") == None:
+            image = user_profile.profileimage
+            bio = request.POST['bio']
+            location = request.POST['location']
+
+            user_profile.profileimage = image
+            user_profile.bio = bio
+            user_profile.location = location
+            user_profile.save()
+
+        if request.FILES.get("image") != None:
+            image = request.FILES.get("image")
+            bio = request.POST['bio']
+            location = request.POST['location']
+
+            user_profile.profileimage = image
+            user_profile.bio = bio
+            user_profile.location = location
+            user_profile.save()
+
+        return redirect("setting")
+    return render(request,"setting.html",context)
 
 def signin(request):
     if request.method=='POST' :

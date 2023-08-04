@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-# import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +25,7 @@ SECRET_KEY = 'django-insecure-8w+@w@3hfzqjjtgjl6s=^1o#0_$=y+fn^wr!1gkq#+0hmzk4*b
 DEBUG = True
 
 ALLOWED_HOSTS = []
-# DEFAULT_IMAGE_URL = 'C:\Users\hp folio\Desktop\python\building-a-socialmeddia-site\social_media\social_book\core\media\mlank-profile-picture.png'
+
 
 # Application definition
 
@@ -119,11 +118,10 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+import os
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -131,5 +129,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = 'media/'
-# MEDIA_ROOT =os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT =os.path.join(BASE_DIR,'media')
