@@ -9,8 +9,12 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url="signin")
 def index(request):
+    user_profile = Profile.objects.get(user=request.user)
     template = loader.get_template("index.html")
-    return HttpResponse(template.render())
+    context = {
+        "user_profile" : user_profile,
+    }
+    return HttpResponse(template.render(context,request))
 
 @login_required(login_url="signin")
 def setting(request):
@@ -95,7 +99,9 @@ def signup(request):
     else:      
         return render(request,"signup.html")
 
-def profile(request):
+@login_required(login_url="signin")
+
+def upload(request):
     template = loader.get_template("profile.html")
     return HttpResponse(template.render())
 
