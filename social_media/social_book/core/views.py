@@ -3,7 +3,7 @@ from django.template import loader
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
-from .models import Profile,Post
+from .models import Profile,Post,likePost
 from django.contrib.auth.decorators import login_required
 
 
@@ -11,12 +11,37 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
+    
+
+
+    posts = Post.objects.all()
     template = loader.get_template("index.html")
     context = {
         "user_profile" : user_profile,
+        "posts" : posts,
     }
     return HttpResponse(template.render(context,request))
 
+@login_required(login_url="signin")
+def like_post(request):
+    username = request.user.username
+    post_id = request.GET.get("post_id")
+
+    post = Post.objects.get(id=post_id)
+    like_filter = likePost.objects.filter(post_id=post_id, username=username).first()
+
+    if like_filter == None:
+        new_like = likePost.objects.create(post_id=post_id, username=username)
+        new_like.save()
+        post.no_of_likes = post.no_of_likes + 1
+        post.save()
+        return redirect("/")
+    else:
+        like_filter.delete()
+        post.no_of_likes = post.no_of_likes - 1
+        post.save()
+        return redirect("/")
+         
 @login_required(login_url="signin")
 def setting(request):
     user_profile = Profile.objects.get(user=request.user)
