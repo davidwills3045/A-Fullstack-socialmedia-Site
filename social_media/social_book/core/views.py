@@ -3,8 +3,9 @@ from django.template import loader
 from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
-from .models import Profile,Post,likePost
+from .models import Profile,Post,likePost,followersCount
 from django.contrib.auth.decorators import login_required
+from itertools import chain
 
 
 @login_required(login_url="signin")
@@ -12,13 +13,25 @@ def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
     
+    user_following_list = []
+    feed = []
 
+    user_following = followersCount.objects.filter(follower=request.user.username)
+
+    for users in user_following:
+        user_following_list.append(users.user)
+
+    for usernames in user_following_list:
+        feed_lists = Post.objects.filter(user=usernames)
+        feed.append(feed_lists)
+
+    feed_list = list(chain(*feed))
 
     posts = Post.objects.all()
     template = loader.get_template("index.html")
     context = {
         "user_profile" : user_profile,
-        "posts" : posts,
+        "posts" : feed_list,
     }
     return HttpResponse(template.render(context,request))
 
@@ -140,12 +153,57 @@ def upload(request):
     else:
         return redirect("/")
 
+@login_required(login_url="signin")
+def profile(request,pk):
+    user_object = User.objects.get(username =pk)
+    user_profile = Profile.objects.get(user=user_object)
+    # getting the amount of post a specific user has
+    user_posts = Post.objects.filter(user=pk )
+    user_post_length = len(user_posts)
+    
+    follower = request.user.username
+    user = pk
 
-def profile(request):
+    if followersCount.objects.filter(follower=follower,user=user).first():
+        button_text = "Unfollow"
+    else:
+        button_text = "Follow"
+
+    user_follower = len(followersCount.objects.filter(user=pk))
+    user_following = len(followersCount.objects.filter(follower=pk))
+
     template = loader.get_template("profile.html")
-    return HttpResponse(template.render())
+    context = {
+        "user_object" : user_object,
+        "user_profile" : user_profile,
+        "user_posts" : user_posts,
+        "user_post_length" : user_post_length,
+        "button_text" : button_text,
+        "user_follower" : user_follower,
+        "user_following" : user_following,
+    }
+    return HttpResponse(template.render(context,request))
 
 @login_required(login_url="signin")
 def logout(request):
     auth.logout(request)
     return redirect("signin")
+
+@login_required(login_url="signin")
+def follow(request):
+    if request.method == "POST":
+        follower = request.POST["follower"]
+        user = request.POST["user"]
+
+            #unfollow
+        if followersCount.objects.filter(follower=follower, user=user).first():
+            delete_follower = followersCount.objects.get(follower=follower, user=user)
+            delete_follower.delete()
+            return redirect("/profile/" + user)
+        else:
+            # for unfollow
+            new_follower = followersCount.objects.create(follower=follower, user=user)
+            new_follower.save()
+            return redirect("/profile/" + user)
+    else:
+        return redirect('/')
