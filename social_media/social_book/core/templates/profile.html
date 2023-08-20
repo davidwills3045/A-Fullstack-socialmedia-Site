@@ -17,6 +17,18 @@
     <link rel="stylesheet" href="{% static 'css/color.css' %}">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
 
+	<style>
+		#uploaded-post{
+			overflow: scroll;
+
+		}
+		#uploaded-post::-webkit-scrollbar{
+			display: none;
+		}
+		body::-webkit-scrollbar{
+			display: none;
+		}
+	</style>
 </head>
 <body>
 <!--<div class="se-pre-con"></div>-->
@@ -127,19 +139,10 @@
 									
 									
 								</aside>
-							</div><!-- sidebar -->
-							
-
-
-
-
-
-
-
-
-
+							</div>
+					
 							<div class="col-lg-6">
-								<div class="central-meta">
+								<div class="central-meta" id="uploaded-post">
 									<ul class="photos">
 										{% for posted_image in user_posts%}
 										<li>
@@ -151,14 +154,9 @@
 										
 										
 									</ul>
-									<!--<div class="lodmore"><button class="btn-view btn-load-more"></button></div>-->
-								</div><!-- photos -->
-							</div><!-- centerl meta -->
-							<div class="col-lg-3">
-								<aside class="sidebar static">
 									
-								</aside>
-							</div><!-- sidebar -->
+								</div>
+							</div>
 						</div>	
 					</div>
 				</div>

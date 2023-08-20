@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render,redirect
@@ -9,11 +10,13 @@ from itertools import chain
 import random
 
 
+
 @login_required(login_url="signin")
 def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
     
+
     user_following_list = []
     feed = []
 

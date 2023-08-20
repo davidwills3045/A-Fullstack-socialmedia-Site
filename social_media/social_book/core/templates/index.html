@@ -29,7 +29,38 @@
         #feeds::-webkit-scrollbar {
             display: none;
         }
-        body::-webkit-scrollbar{
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stress::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stress {
+            overflow: scroll;
+            height: 20vh;
+            width: 100%;
+            border: 2px dashed;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #BE185D;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .custom-file-upload input[type="file"] {
             display: none;
         }
     </style>
@@ -56,9 +87,9 @@
                         </div>-->
 
                     <!-- <div class="header_search"> -->
-                        <input type="text" name="username" placeholder="Search for username..">&nbsp; &nbsp;
-                        <button type="submit"><i class="fa fa-search fa-1x"></i></button>
-                        <!-- <div class="icon-search">
+                    <input type="text" name="username" placeholder="Search for username..">&nbsp; &nbsp;
+                    <button type="submit"><i class="fa fa-search fa-1x"></i></button>
+                    <!-- <div class="icon-search">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -97,31 +128,41 @@
 
                         <div class="flex flex-col choose-upload text-center">
 
-                            <div
-                                class="bg-gray-100 border-2 border-dashed flex flex-col h-24 items-center justify-center relative w-full rounded-lg  ">
+                            <div class="stress">
+
+                                <img id="image-preview" src="{% static 'cloudy.png'%}">
+                            </div>
+
+                            <!-- <div>
+
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                     class="w-12">
                                     <path
                                         d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
                                     <path d="M9 13h2v5a1 1 0 11-2 0v-5z" />
                                 </svg>
-                            </div>
-                            <form action="http://127.0.0.1:8000/upload/" method="POST" enctype="multipart/form-data">
+                            </div> -->
+                            <form action="http://127.0.0.1:8000/upload/" method="POST" enctype="multipart/form-data"
+                                id="upload-form">
                                 {% csrf_token %}
-                                <p class="my-3 leading-6"> Upload pics
-                                </p>
+                                <h2 class="my-3 leading-6"> Upload pics
+                                </h2>
+                                <!-- class="bg-gray-100 border-2 border-dashed flex flex-col h-24 items-center justify-center relative w-full rounded-lg  " -->
+                                <!-- <div>
+                                </div> -->
                                 <div>
-                                    <input type="file" name="image_upload">
-                                    <!-- <a href="#" class="button soft-warning small"> Choose file</a> -->
-                                    <textarea class="button soft-warning small" name="caption"
-                                        placeholder="caption..."></textarea>
+                                    <label class="custom-file-upload">
+                                        <span style="color: white;">choose a photo</span>
+                                        <input type="file" name="image_upload" id="image-upload-input" accept="image/*"
+                                            required>
+
+                                    </label>
+                                    <textarea class="button soft-warning small" name="caption" placeholder="caption..."
+                                        required></textarea>
                                     <br>
                                     <button type="submit" class="button bg-blue-700">upload</button>
                                 </div>
                             </form>
-                            <!-- <a href="#" class="uk-text-muted mt-3 uk-link"
-                                    uk-toggle="target: .choose-upload ;  animation: uk-animation-slide-right-small, uk-animation-slide-left-medium; queued: true">
-                                    Or Import Video </a> -->
                         </div>
 
                         <div class="uk-flex uk-flex-column choose-upload" hidden>
@@ -262,7 +303,6 @@
                             </a>
                             <div class="bg-white w-56 shadow-md mx-auto p-2 mt-12 rounded-md text-gray-500 hidden text-base border border-gray-100  "
                                 uk-drop="mode: hover;pos: top-right">
-
                                 <ul class="space-y-1">
                                     <li>
                                         <a href="#"
@@ -291,12 +331,12 @@
                                     <li>
                                         <hr class="-mx-2 my-2 ">
                                     </li>
-                                    <li>
-                                        <a href="#"
-                                            class="flex items-center px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-500 rounded-md ">
-                                            <i class="uil-trash-alt mr-1"></i> Delete
-                                        </a>
-                                    </li>
+                                    <!-- <li> -->
+                                    <!-- <a href="http://127.0.0.1:8000/delete_post/"
+                                        class="flex items-center px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-500 rounded-md ">
+                                        <i class="uil-trash-alt mr-1"></i> Delete
+                                    </a> -->
+                                    <!-- </li> -->
                                 </ul>
 
                             </div>
@@ -368,10 +408,14 @@
                                 Liked <strong> taiye</strong> and <strong> 209 Others </strong>
                             </div>
                         </div> -->
-                        <p>
-                            <a href="http://127.0.0.1:8000/profile/{{post.user}}"><strong>{{post.user}}</strong>
-                                {{post.caption}}</a>
-                        </p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p>
+                                <a href="http://127.0.0.1:8000/profile/{{post.user}}"><strong>{{post.user}}</strong>
+                                    {{post.caption}}</a>
+                            </p>
+                            <p>{{post.created_at}}</p>
+                        </div>
+                        
                         <!-- <div class="border-t pt-4 space-y-4 ">
                             <div class="flex">
                                 <div class="w-10 h-10 rounded-full relative flex-shrink-0">
@@ -476,6 +520,24 @@
     <script src="{% static 'assets/js/uikit.js' %}"></script>
     <script src="{% static 'assets/js/simplebar.js' %}"></script>
     <script src="{% static 'assets/js/custom.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#image-upload-input").change(function () {
+                var input = this;
+
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $("#image-preview").attr("src", e.target.result);
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
+        });
+    </script>
 
 
     <script src="{% static '../../unpkg.com/ionicons%405.2.3/dist/ionicons.js' %}"></script>
