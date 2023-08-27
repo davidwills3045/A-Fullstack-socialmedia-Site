@@ -15,7 +15,9 @@ import random
 def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
+
     
+
 
     user_following_list = []
     feed = []
@@ -36,7 +38,7 @@ def index(request):
     user_following_all = []
 
     for user in user_following:
-        user_list = User.objects.get(username=user.user)
+        user_list = User.objects.get(username=request.user)
         user_following_all.append(user_list)
 
     new_suggestion_list = [x for x in list(all_users) if (x not in list(user_following_all))]
@@ -56,8 +58,18 @@ def index(request):
 
     suggestions_username_profile_list = list(chain(*username_profile_list))
 
+    follower = request.user.username
+    user = suggestions_username_profile_list
+
+    if followersCount.objects.filter(follower=follower,user=user).first():
+        button_text = "Unfollow"
+    else:
+        button_text = "Follow"
+
+
     template = loader.get_template("index.html")
     context = {
+        "button_text" : button_text,
         "user_profile" : user_profile,
         "posts" : feed_list,
         "suggestions_username_profile_list":suggestions_username_profile_list[:4],
@@ -236,6 +248,25 @@ def follow(request):
             return redirect("/profile/" + user)
     else:
         return redirect('/')
+    
+# @login_required(login_url="signin")
+# def follow2(request):
+#     if request.method == "POST":
+#         follower = request.POST["follower"]
+#         user = request.POST["user"]
+
+#             #unfollow
+#         if followersCount.objects.filter(follower=follower, user=user).first():
+#             delete_follower = followersCount.objects.get(follower=follower, user=user)
+#             delete_follower.delete()
+#             return redirect("/" + user)
+#         else:
+#             # for unfollow
+#             new_follower = followersCount.objects.create(follower=follower, user=user)
+#             new_follower.save()
+#             return redirect("/" + user)
+#     else:
+#         return redirect('/')
     
 @login_required(login_url="signin")
 def search(request):
